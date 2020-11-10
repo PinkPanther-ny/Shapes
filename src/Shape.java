@@ -4,6 +4,7 @@ import bagel.util.Point;
 import bagel.util.Vector2;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class Shape {
 
@@ -52,11 +53,15 @@ public class Shape {
         }
 
         Point curMouse = input.getMousePosition();
-        if(input.isDown(MouseButtons.LEFT) && curMouse.distanceTo(location)<radius){
+
+        Predicate<Point> collide = point -> point.distanceTo(new Point(location.x, point.y)) <= radius &&
+                                            point.distanceTo(new Point(point.x, location.y)) <= radius;
+
+        if(input.isDown(MouseButtons.LEFT) && collide.test(curMouse)){
             rotation += rotateAngle;
         }
 
-        if(input.isDown(MouseButtons.LEFT) && curMouse.distanceTo(location)< radius){
+        if(input.isDown(MouseButtons.LEFT) && collide.test(curMouse)){
             if(!isDragging) {
                 clickShift = new Vector2(curMouse.x - location.x, curMouse.y - location.y);
                 isDragging = true;
